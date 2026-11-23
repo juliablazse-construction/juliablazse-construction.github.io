@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Usterki</title>
+<meta name="theme-color" content="#0d1013">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Usterki">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<!-- ============ EKRAN: LISTA PROJEKTÓW ============ -->
+<section id="home" class="screen active">
+  <header class="topbar">
+    <div class="brand"><img class="logo-img" src="icons/icon-64.png" alt="">Usterki</div>
+    <button class="icon-btn look-btn" id="btnLookHome" aria-label="Wygląd raportu">🎨</button>
+    <button class="icon-btn" id="btnAppSettings" aria-label="Ustawienia">⚙︎</button>
+  </header>
+  <div id="installHint" class="hint-banner hidden">
+    <b>Wskazówka:</b> dodaj aplikację do ekranu początkowego (Udostępnij → „Do ekranu początkowego”), żeby działała offline i nie traciła danych.
+    <button class="link-btn" id="btnHideInstall">OK</button>
+  </div>
+  <main class="home-main">
+    <button class="big-add" id="btnNewProject">
+      <span class="plus">+</span>
+      <span><b>Nowy projekt</b><br><small>Wgraj PDF z rysunkiem</small></span>
+    </button>
+    <input type="file" id="pdfInput" accept="application/pdf,.pdf" hidden>
+    <div class="home-row"><button class="btn ghost import-btn" id="btnImport">📂 Wczytaj projekt z kopii</button><button class="btn ghost import-btn" id="btnContractors">👷 Wykonawcy</button></div>
+    <input type="file" id="backupInput" hidden>
+    <h2 class="section-title">Projekty</h2>
+    <div id="projectList" class="project-list"></div>
+    <p id="emptyProjects" class="empty">Brak projektów. Zacznij od wgrania PDF z rysunkiem budowy.</p>
+    <button id="archToggle" class="arch-toggle hidden" type="button"></button>
+    <div id="archList" class="project-list arch-list hidden"></div>
+  </main>
+</section>
+
+<!-- ============ EKRAN: RYSUNEK ============ -->
+<section id="project" class="screen">
+  <header class="topbar">
+    <button class="icon-btn" id="btnBack" aria-label="Wróć">‹</button>
+    <div class="title" id="projTitle">Projekt</div>
+    <button class="icon-btn backup-btn" id="btnBackup" aria-label="Kopia projektu na dysku">💾<i class="cdot"></i></button>
+    <button class="icon-btn look-btn" id="btnLook" aria-label="Wygląd raportu">🎨</button>
+    <button class="icon-btn" id="btnProjSettings" aria-label="Ustawienia projektu">⚙︎</button>
+  </header>
+  <div id="viewer">
+    <div id="stage">
+      <canvas id="baseCanvas"></canvas>
+      <canvas id="detailCanvas"></canvas>
+    </div>
+    <div id="pins"></div>
+    <canvas id="loupe" width="10" height="10"></canvas>
+    <div id="loading" class="loading hidden"><div class="spinner"></div><span id="loadingText">Wczytywanie rysunku…</span></div>
+    <button id="planBtn" class="plan-btn" type="button">📄 Rysunek ▾</button>
+    <div id="pageNav" class="page-nav hidden">
+      <button id="btnPrevPage">‹</button><span id="pageLabel">1/1</span><button id="btnNextPage">›</button>
+    </div>
+    <div id="holdHint" class="hold-hint">Przytrzymaj palec w miejscu usterki</div>
+  </div>
+  <nav class="bottombar">
+    <button id="btnFit"><span class="bi">⤢</span>Cały rysunek</button>
+    <button id="btnList"><span class="bi">☰</span>Usterki <b id="defCount">0</b></button>
+    <button id="btnReport" class="primary"><span class="bi">⎙</span>Raport</button>
+  </nav>
+</section>
+
+<!-- ============ ARKUSZ: USTERKA ============ -->
+<div id="defectSheet" class="sheet">
+  <div class="sheet-card">
+    <div class="sheet-head">
+      <span class="badge" id="dfBadge">1</span>
+      <h3 id="dfTitle">Nowa usterka</h3>
+      <button class="icon-btn" id="dfClose" aria-label="Zamknij">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div id="dfVerify" class="verify hidden">
+        <label class="lbl" style="margin-top:2px">Weryfikacja usterki</label>
+        <div class="vstat" id="dfStatus">
+          <button type="button" data-s="open">○ Do usunięcia</button>
+          <button type="button" data-s="fixed">✓ Usunięta</button>
+          <button type="button" data-s="remarks">⚠ Uwagi</button>
+        </div>
+        <label class="lbl" for="dfVBy" style="margin-top:0">Inspektor</label>
+        <input id="dfVBy" type="text" placeholder="imię i nazwisko" style="margin-bottom:8px">
+        <textarea id="dfVComment" rows="2" placeholder="Komentarz z weryfikacji (opcjonalnie), np. poprawione tylko częściowo"></textarea>
+        <div class="photos" id="dfVPhotos"></div>
+        <button class="btn ghost" id="dfVCamera" type="button" style="width:100%;margin-top:6px">📷 Zdjęcie z weryfikacji</button>
+        <div id="dfHistory" class="history"></div>
+      </div>
+      <label class="lbl hidden" id="dfPhotosLbl">Zdjęcia usterki</label>
+      <div class="photos" id="dfPhotos"></div>
+      <div class="photo-btns">
+        <button class="btn" id="dfCamera">📷 Zrób zdjęcie</button>
+        <button class="btn ghost" id="dfGallery">🖼 Z galerii</button>
+      </div>
+      <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden>
+      <input type="file" id="galleryInput" accept="image/*" multiple hidden>
+
+      <label class="lbl">Kategoria</label>
+      <div class="cats" id="dfCats"></div>
+
+      <div class="lbl-row"><label class="lbl" for="dfComment">Komentarz <small>(opcjonalnie)</small></label>
+        <button type="button" class="mini-btn hidden" id="dfMic">🎤 Dyktuj</button>
+        <button type="button" class="mini-btn" id="dfSketch">✏️ Dodaj szkic</button></div>
+      <textarea id="dfComment" rows="3" placeholder="np. opis usterki…"></textarea>
+      <div class="sugg" id="dfCommentSugg"></div>
+
+      <label class="lbl" for="dfContractor">Wykonawca <small>(opcjonalnie)</small></label>
+      <input id="dfContractor" type="text" placeholder="wybierz poniżej albo wpisz nowego" autocomplete="off" list="contractorList">
+      <datalist id="contractorList"></datalist>
+      <div class="sugg" id="dfContractorSugg"></div>
+      <label class="lbl" for="dfDue">Termin usunięcia <small>(opcjonalnie)</small></label>
+      <div class="due-row"><input id="dfDue" type="date">
+        <button type="button" data-days="3">+3 dni</button><button type="button" data-days="7">+7</button><button type="button" data-days="14">+14</button><button type="button" data-days="0" aria-label="Bez terminu">✕</button></div>
+
+      <details class="more" id="dfMore">
+        <summary>Szczegóły / lokalizacja <small>(opcjonalnie)</small></summary>
+        <label class="lbl" for="dfTable">Element</label>
+        <input id="dfTable" type="text" placeholder="np. 2x28, 2x14…" autocomplete="off">
+        <div class="sugg" data-for="dfTable"></div>
+        <label class="lbl" for="dfModule">Materiał / typ</label>
+        <input id="dfModule" type="text" placeholder="" autocomplete="off">
+        <div class="sugg" data-for="dfModule"></div>
+        <label class="lbl" for="dfPlace">Lokalizacja / opis miejsca</label>
+        <input id="dfPlace" type="text" placeholder="" autocomplete="off">
+        <div class="sugg" id="dfPlaceSugg"></div>
+      </details>
+      <div class="meta" id="dfMeta"></div>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn danger ghost hidden" id="dfDelete">Usuń</button>
+      <button class="btn ghost hidden" id="dfMove">Przesuń pinezkę</button>
+      <button class="btn primary big" id="dfAccept">✓ Akceptuj</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ARKUSZ: LISTA USTEREK ============ -->
+<div id="listSheet" class="sheet">
+  <div class="sheet-card tall">
+    <div class="sheet-head">
+      <h3>Usterki</h3>
+      <button class="icon-btn" data-close aria-label="Zamknij">✕</button>
+    </div>
+    <div class="filter-row" id="listStatus"></div>
+    <div class="filter-row" id="listFilter"></div>
+    <div class="filter-row hidden" id="listContr"></div>
+    <div class="sheet-body" id="defList"></div>
+  </div>
+</div>
+
+<!-- ============ ARKUSZ: RAPORT ============ -->
+<div id="reportSheet" class="sheet">
+  <div class="sheet-card">
+    <div class="sheet-head">
+      <h3>Raport</h3>
+      <button class="icon-btn" data-close aria-label="Zamknij">✕</button>
+    </div>
+    <div class="sheet-body">
+      <label class="lbl" for="rpFile">Nazwa raportu <small>(do nazwy pliku: nazwa_raport_rev0.pdf)</small></label>
+      <input id="rpFile" type="text" autocomplete="off">
+      <label class="lbl" for="rpTitle">Tytuł raportu</label>
+      <input id="rpTitle" type="text">
+      <label class="lbl" for="rpAuthor">Sporządził(a) raport</label>
+      <input id="rpAuthor" type="text" placeholder="imię i nazwisko">
+      <label class="lbl" for="rpInspector">Inspektor <small>(kto był na odbiorze / weryfikacji)</small></label>
+      <input id="rpInspector" type="text" placeholder="imię i nazwisko">
+      <label class="lbl" for="rpNote">Uwagi ogólne <small>(opcjonalnie)</small></label>
+      <textarea id="rpNote" rows="2"></textarea>
+      <div id="rpScopeBox" class="hidden"><label class="lbl" for="rpScope">Zakres raportu</label><select id="rpScope"></select></div>
+      <div id="rpContrBox" class="hidden" hidden><label class="lbl" for="rpContr">Wykonawca <small>(raport tylko dla jednego wykonawcy)</small></label><select id="rpContr"></select></div>
+      <label class="check"><input type="checkbox" id="rpMap" checked> Wycinek rysunku przy każdej usterce</label>
+      <button type="button" class="look-row" id="rpLookOpen"><span>🎨</span><span><b>Wygląd raportu</b><br><small id="rpLookSum">logo, wielkość zdjęć, przed/po</small></span><span>›</span></button>
+      <div id="rpProgress" class="progress hidden"><div class="bar"><i></i></div><span>Tworzenie raportu…</span></div>
+      <div id="rpResult" class="hidden result-box">
+        <p id="rpResultText"></p>
+        <button class="btn primary big" id="rpView">📄 Pokaż raport</button>
+        <button class="btn" id="rpShare">💾 Zapisz raport</button>
+        <button class="btn hidden" id="rpFolder"></button>
+        <button class="link-btn hidden" id="rpFolderPick">Wybierz inny folder</button>
+        <button class="btn ghost hidden" id="rpDownload">Pobierz plik</button>
+        <div id="rpMulti"></div>
+        <button class="btn hidden" id="rpBackupNow">💾 Zapisz też kopię projektu na dysku (zalecane)</button>
+        <button class="btn ghost hidden" id="rpArchive">📦 Odbiór zakończony – przenieś projekt do archiwum</button>
+      </div>
+      <div class="saved-reports hidden" id="rpSavedBox">
+        <label class="lbl">Zapisane raporty</label>
+        <div id="rpSaved"></div>
+        <button type="button" class="link-btn hidden" id="rpSavedMore"></button>
+      </div>
+    </div>
+    <div class="sheet-foot col collapsed" id="rpFoot">
+      <button type="button" class="foot-handle" id="rpFootToggle" aria-expanded="false"><i class="grip"></i><span><b>📄 Utwórz raport</b><small>aktualizacja · nowy · końcowy · dla wykonawców · Excel</small></span><em>▴</em></button>
+      <p class="lbl foot-lbl">📋 Raport dla całej inwestycji <small>(wszystkie usterki i wykonawcy – np. na naradę)</small></p>
+      <p class="small-note hidden" id="rpChoice">Od ostatniego raportu zaszły zmiany. Co zrobić?</p>
+      <button class="btn primary big" id="rpMake">Generuj raport dla całej inwestycji</button>
+      <button class="btn primary big hidden" id="rpUpdate">🔄 Zaktualizuj ostatni raport</button>
+      <button class="btn big hidden" id="rpNew">➕ Nowy raport – ponowna weryfikacja</button>
+      <button class="btn big hidden" id="rpFinal">🏁 Zakończ odbiór i scal raporty</button>
+      <p class="lbl foot-lbl hidden" id="rpContrLbl">👷 Raporty dla wykonawców</p>
+      <button class="btn big hidden" id="rpContrBtn">👷 Raport dla wykonawcy ›</button>
+      <div id="rpContrPanel" class="result-box hidden">
+        <button type="button" class="link-btn" id="rpContrBack">‹ Wróć do wszystkich opcji</button>
+        <p class="contr-q">👷 Jak przygotować raport dla wykonawców?</p>
+        <button class="btn" id="rpContrAll">Osobny raport dla każdego wykonawcy</button>
+        <button class="btn" id="rpContrOne">Raport dla wybranego wykonawcy ›</button>
+        <div id="rpContrList" class="hidden"></div>
+      </div>
+      <p class="lbl foot-lbl">Inne pliki</p>
+      <button class="btn ghost" id="rpExcel">📊 Tabela Excel (.xlsx)</button>
+      <button class="btn ghost" id="rpZip">Paczka ZIP: raport + zdjęcia + tabela CSV</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ARKUSZ: USTAWIENIA PROJEKTU ============ -->
+<div id="projSheet" class="sheet">
+  <div class="sheet-card">
+    <div class="sheet-head">
+      <h3>Ustawienia projektu</h3>
+      <button class="icon-btn" data-close aria-label="Zamknij">✕</button>
+    </div>
+    <div class="sheet-body">
+      <label class="lbl" for="psName">Nazwa projektu / budowy</label>
+      <input id="psName" type="text">
+      <p class="small-note" id="psIndustry"></p>
+      <label class="lbl" for="psContrIn">👷 Wykonawcy na tej budowie <small>(opcjonalnie — można też dopisywać w usterce)</small></label>
+      <div class="add-row"><input id="psContrIn" type="text" placeholder="nazwa wykonawcy" autocomplete="off" list="contractorList"><button type="button" class="plus-btn" id="psContrAdd" aria-label="Dodaj wykonawcę">+</button></div>
+      <div class="clist" id="psContrList"></div>
+      <div class="sugg" id="psContractorsSugg"></div>
+      <label class="lbl">Kategorie usterek <small>(stuknij kolor, żeby go zmienić)</small></label>
+      <div id="psCats" class="cat-edit"></div>
+      <button class="btn ghost" id="psAddCat" style="width:100%;margin-top:8px">+ Dodaj kategorię</button>
+      <label class="lbl" for="psTables" id="psTablesLbl">Rodzaje stołów <small>(jeden w linii — pojawią się jako podpowiedzi)</small></label>
+      <textarea id="psTables" rows="3"></textarea>
+      <label class="lbl" for="psModules" id="psModulesLbl">Rodzaje modułów <small>(jeden w linii)</small></label>
+      <textarea id="psModules" rows="2"></textarea>
+      <hr>
+      <button class="btn ghost" id="psArchive" style="width:100%;margin-bottom:10px">📦 Przenieś do archiwum</button>
+      <button class="btn danger ghost" id="psDelete">Usuń projekt z tego urządzenia</button>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn primary big" id="psSave">Zapisz</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ARKUSZ: USTAWIENIA APLIKACJI ============ -->
+<div id="appSheet" class="sheet">
+  <div class="sheet-card">
+    <div class="sheet-head">
+      <h3>Ustawienia</h3>
+      <button class="icon-btn" data-close aria-label="Zamknij">✕</button>
+    </div>
+    <div class="sheet-body">
+      <label class="lbl" for="asAuthor">Sporządził(a) raport <small>(domyślnie w raportach)</small></label>
+      <input id="asAuthor" type="text" placeholder="imię i nazwisko">
+      <label class="lbl" for="asInspector">Inspektor <small>(domyślnie przy weryfikacji i w raportach)</small></label>
+      <input id="asInspector" type="text" placeholder="imię i nazwisko">
+      <p class="small-note" id="asStorage"></p>
+      <p class="small-note">Wszystkie dane (rysunki, zdjęcia, usterki) są zapisywane tylko na tym urządzeniu. Kopię całego projektu zapisujesz na swoim dysku przyciskiem 💾 w projekcie, a raporty przyciskiem „Udostępnij”.</p>
+      <button class="btn" id="asFeedback" type="button" style="width:100%;margin-top:8px">💬 Zgłoś problem lub pomysł</button>
+      <p class="small-note">Wersja <span id="appVersion"></span></p>
+      <p class="small-note">© Julia Błaż. Wszelkie prawa zastrzeżone. Aplikacja jest chroniona prawem autorskim — kopiowanie, modyfikowanie, rozpowszechnianie lub odsprzedaż jej kodu albo wyglądu bez pisemnej zgody autorki jest zabronione.</p>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn primary big" id="asSave">Zapisz</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ARKUSZ: ZGŁOSZENIE PROBLEMU / POMYSŁU ============ -->
+<div id="fbSheet" class="sheet">
+  <div class="sheet-card">
+    <div class="sheet-head">
+      <h3>Zgłoś problem lub pomysł</h3>
+      <button class="icon-btn" data-close aria-label="Zamknij">✕</button>
+    </div>
+    <div class="sheet-body">
+      <label class="lbl">Czego dotyczy?</label>
+      <div class="cats" id="fbType">
+        <button type="button" class="cat sel" data-t="Błąd">🐞 Coś nie działa</button>
+        <button type="button" class="cat" data-t="Pomysł">💡 Pomysł / co dodać</button>
+        <button type="button" class="cat" data-t="Inne">✉️ Inne</button>
+      </div>
+      <label class="lbl" for="fbText">Opisz krótko</label>
+      <textarea id="fbText" rows="5" placeholder="np. po kliknięciu „Raport” nic się nie dzieje / przydałaby się opcja…"></textarea>
+      <p class="small-note">Po kliknięciu „Wyślij” otworzy się Twoja poczta z gotową wiadomością. Możesz dołączyć do niej zrzut ekranu. Do wiadomości dodamy automatycznie wersję aplikacji i rodzaj telefonu, żeby łatwiej było znaleźć problem.</p>
+    </div>
+    <div class="sheet-foot col">
+      <button class="btn primary big" id="fbSend">✉️ Wyślij</button>
+      <button class="btn ghost" id="fbCopy">Kopiuj treść (gdy poczta się nie otwiera)</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ARKUSZ: RYSUNKI PROJEKTU ============ -->
+<div id="plansSheet" class="sheet">
+  <div class="sheet-card">
+    <div class="sheet-head">
+      <h3>Rysunki w projekcie</h3>
+      <button class="icon-btn" data-close aria-label="Zamknij">✕</button>
+    </div>
+    <div class="sheet-body">
+      <p class="small-note">Jeden projekt może mieć kilka rysunków PDF, np. osobno każdą kondygnację budynku (Parter, Piętro 1…) albo każdy etap. Stuknij rysunek, żeby go otworzyć.</p>
+      <div id="plansList"></div>
+      <input type="file" id="planInput" accept="application/pdf,.pdf" hidden>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn primary big" id="planAdd">+ Dodaj rysunek (PDF)</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ARKUSZ: WYBÓR BRANŻY ============ -->
+<div id="indSheet" class="sheet">
+  <div class="sheet-card">
+    <div class="sheet-head">
+      <h3>Jaka to budowa?</h3>
+      <button class="icon-btn" data-close aria-label="Zamknij">✕</button>
+    </div>
+    <div class="sheet-body">
+      <p class="small-note">Wybierz branżę — dostaniesz gotową listę kategorii usterek. Stuknij ☆, żeby dodać branżę do ulubionych: będzie na górze listy.</p>
+      <div id="indList" class="ind-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ARKUSZ: USUWANIE PROJEKTU ============ -->
+<div id="delSheet" class="sheet">
+  <div class="sheet-card">
+    <div class="sheet-head">
+      <h3>Usunąć projekt?</h3>
+      <button class="icon-btn" data-close aria-label="Zamknij">✕</button>
+    </div>
+    <div class="sheet-body">
+      <p>Projekt <b id="delName"></b> zostanie usunięty z tego urządzenia razem z całą zawartością:</p>
+      <p class="small-note" id="delInfo"></p>
+      <p class="cs-status" id="delBackup"></p>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn ghost" data-close>Anuluj</button>
+      <button class="btn big danger-solid" id="delGo">Usuń</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ARKUSZ: KOPIA PROJEKTU ============ -->
+<div id="backupSheet" class="sheet">
+  <div class="sheet-card">
+    <div class="sheet-head">
+      <h3>Kopia projektu na dysku</h3>
+      <button class="icon-btn" data-close aria-label="Zamknij">✕</button>
+    </div>
+    <div class="sheet-body">
+      <p>Zapisz cały projekt w jednym pliku na swoim dysku (Dysk Google, iCloud, OneDrive lub inny). Plik zawiera rysunek, wszystkie usterki, zdjęcia i historię raportów. Same pliki PDF raportów zapisujesz osobno przyciskiem „💾 Zapisz raport” – dzięki temu kopia jest mała i zapisuje się szybko.</p>
+      <p class="small-note">Gdy zgubisz telefon albo wyczyścisz przeglądarkę: otwórz aplikację na nowym urządzeniu → „Wczytaj projekt z kopii” → wybierz ten plik.</p>
+      <p class="cs-status" id="bkStatus"></p>
+      <div id="bkProgress" class="progress hidden"><div class="bar"><i></i></div><span>Tworzenie kopii…</span></div>
+      <div id="bkResult" class="hidden result-box">
+        <p id="bkResultText"></p>
+        <button class="btn primary big" id="bkShare">💾 Zapisz kopię projektu</button>
+        <button class="btn hidden" id="bkFolder"></button>
+        <button class="link-btn hidden" id="bkFolderPick">Wybierz inny folder</button>
+        <button class="btn ghost hidden" id="bkDownload">Pobierz plik</button>
+      </div>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn primary big hidden" id="bkMake">💾 Utwórz kopię ponownie</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ARKUSZ: BAZA WYKONAWCÓW ============ -->
+<div id="contrSheet" class="sheet">
+  <div class="sheet-card">
+    <div class="sheet-head">
+      <h3>👷 Wykonawcy</h3>
+      <button class="icon-btn" data-close aria-label="Zamknij">✕</button>
+    </div>
+    <div class="sheet-body">
+      <p class="small-note" style="margin-top:0">Twoja baza wykonawców ze wszystkich budów. Podpowiadają się w każdym projekcie i w każdej usterce.</p>
+      <div class="add-row"><input id="csIn" type="text" placeholder="nazwa wykonawcy" autocomplete="off"><button type="button" class="plus-btn" id="csAdd" aria-label="Dodaj wykonawcę">+</button></div>
+      <div class="clist" id="csList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ WYBÓR: SZKIC NA CZYM ============ -->
+<div id="skPick" class="sheet">
+  <div class="sheet-card">
+    <div class="sheet-head">
+      <h3>✏️ Dodaj szkic</h3>
+      <button class="icon-btn" data-close aria-label="Zamknij">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div id="skPickPhotosBox" class="hidden">
+        <label class="lbl" style="margin-top:0">Rysuj na zdjęciu tej usterki <small>(dotknij zdjęcia)</small></label>
+        <div class="photos" id="skPickPhotos"></div>
+      </div>
+      <label class="lbl">albo</label>
+      <div class="col-btns">
+        <button class="btn" id="skPickCam" type="button">📷 Zrób nowe zdjęcie i rysuj na nim</button>
+        <button class="btn" id="skPickGal" type="button">🖼 Wybierz zdjęcie z galerii i rysuj</button>
+        <button class="btn" id="skPickBlank" type="button">📄 Rysuj na pustej kartce</button>
+      </div>
+      <input type="file" id="skCamInput" accept="image/*" capture="environment" hidden>
+      <input type="file" id="skGalInput" accept="image/*" hidden>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ARKUSZ: WYGLĄD RAPORTU ============ -->
+<div id="lookSheet" class="sheet">
+  <div class="sheet-card">
+    <div class="sheet-head">
+      <h3>🎨 Wygląd raportu</h3>
+      <button class="icon-btn" data-close aria-label="Zamknij">✕</button>
+    </div>
+    <div class="sheet-body">
+      <p class="small-note" style="margin-top:0">Ustawienia obowiązują we wszystkich projektach na tym urządzeniu.</p>
+        <label class="lbl">Logo firmy <small>(na pierwszej stronie)</small></label>
+        <div class="logo-row"><img id="rpLogoImg" class="hidden" alt="Logo"><button type="button" class="btn ghost" id="rpLogoAdd">Dodaj logo</button><button type="button" class="link-btn hidden" id="rpLogoDel">Usuń</button></div>
+        <input type="file" id="logoInput" accept="image/*" hidden>
+        <label class="lbl" for="rpPhotoSize">Wielkość zdjęć</label>
+        <select id="rpPhotoSize"><option value="h">Pół strony na usterkę (2 usterki na stronie)</option><option value="l">Duże (jedno pod drugim)</option><option value="m">Średnie</option><option value="s">Małe (dwa obok siebie)</option></select>
+        <label class="check"><input type="checkbox" id="rpShowContr" checked> Pokazuj nazwy wykonawców w raporcie dla całej inwestycji i końcowym <small>(w raporcie dla wykonawcy nazwa jest zawsze)</small></label>
+        <label class="check"><input type="checkbox" id="rpBeforeAfter" checked> Zdjęcia „przed” i „po” obok siebie (gdy jest zdjęcie z weryfikacji)</label>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn primary big" data-close type="button">✓ Gotowe</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ EDYTOR SZKICU ============ -->
+<div id="sketch" class="sketch hidden">
+  <div class="sk-top">
+    <button class="icon-btn" id="skCancel" aria-label="Anuluj">✕</button>
+    <div class="sk-bgs" id="skBgs">
+      <button type="button" class="sk-tile" id="skTilePhoto"><img id="skTileImg" alt=""><span>Zdjęcie</span></button>
+      <button type="button" class="sk-tile" id="skTileBlank"><i></i><span>Czysta kartka</span></button>
+    </div>
+    <button class="btn primary" id="skSave">✓ Gotowe</button>
+  </div>
+  <div class="sk-area" id="skArea"><canvas id="skCanvas"></canvas></div>
+  <div class="sk-tools">
+    <div class="sk-row" id="skTools">
+      <button data-tool="pen" class="sel">✏️ Pisak</button><button data-tool="arrow">➜ Strzałka</button><button data-tool="circle">◯ Kółko</button><button data-tool="text">T Tekst</button>
+    </div>
+    <div class="sk-row">
+      <span id="skColors"><button data-c="#e53935" class="sel" style="background:#e53935"></button><button data-c="#ffd600" style="background:#ffd600"></button><button data-c="#1e88e5" style="background:#1e88e5"></button><button data-c="#111111" style="background:#111"></button><button data-c="#ffffff" style="background:#fff"></button></span>
+      <button id="skUndo">↶ Cofnij</button>
+    </div>
+  </div>
+</div>
+
+<div id="updBar" class="upd-bar hidden">
+  <span>🔄 <b>Dostępna nowa wersja aplikacji.</b> Twoje dane zostaną.</span>
+  <button class="btn primary" id="updGo" type="button">Zaktualizuj</button>
+  <button class="link-btn" id="updLater" type="button">Później</button>
+</div>
+<div id="toast" class="toast"></div>
+
+<script src="guard.js"></script>
+<script src="vendor/pdf.min.js"></script>
+<script src="vendor/jspdf.umd.min.js"></script>
+<script src="vendor/jszip.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
