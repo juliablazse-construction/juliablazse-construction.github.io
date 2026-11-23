@@ -27,6 +27,10 @@
     <b>Wskazówka:</b> dodaj aplikację do ekranu początkowego (Udostępnij → „Do ekranu początkowego”), żeby działała offline i nie traciła danych.
     <button class="link-btn" id="btnHideInstall">OK</button>
   </div>
+  <div id="licBanner" class="hint-banner hidden">
+    <span id="licBannerTxt"></span>
+    <button class="link-btn" id="licBannerBtn" type="button">Wpisz kod</button>
+  </div>
   <main class="home-main">
     <button class="big-add" id="btnNewProject">
       <span class="plus">+</span>
@@ -269,11 +273,32 @@
       <p class="small-note" id="asStorage"></p>
       <p class="small-note">Wszystkie dane (rysunki, zdjęcia, usterki) są zapisywane tylko na tym urządzeniu. Kopię całego projektu zapisujesz na swoim dysku przyciskiem 💾 w projekcie, a raporty przyciskiem „Udostępnij”.</p>
       <button class="btn" id="asFeedback" type="button" style="width:100%;margin-top:8px">💬 Zgłoś problem lub pomysł</button>
+      <button class="btn hidden" id="asLic" type="button" style="width:100%;margin-top:8px"></button>
       <p class="small-note">Wersja <span id="appVersion"></span></p>
       <p class="small-note">© Julia Błaż. Wszelkie prawa zastrzeżone. Aplikacja jest chroniona prawem autorskim — kopiowanie, modyfikowanie, rozpowszechnianie lub odsprzedaż jej kodu albo wyglądu bez pisemnej zgody autorki jest zabronione.</p>
     </div>
     <div class="sheet-foot">
       <button class="btn primary big" id="asSave">Zapisz</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ARKUSZ: LICENCJA ============ -->
+<div id="licSheet" class="sheet">
+  <div class="sheet-card">
+    <div class="sheet-head">
+      <h3>Licencja</h3>
+      <button class="icon-btn" data-close aria-label="Zamknij">✕</button>
+    </div>
+    <div class="sheet-body">
+      <p id="licState"><b></b></p>
+      <label class="lbl" for="licCode">Kod licencji <small>(dostajesz go e-mailem po zakupie)</small></label>
+      <textarea id="licCode" rows="4" placeholder="USTERKI.…" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>
+      <p class="small-note" id="licMsg" style="color:#c0392b"></p>
+      <p class="small-note">Kod jest przypisany do jednej osoby: jej imię i nazwisko widać w stopce raportów. Dane w aplikacji są zawsze Twoje i nigdy nie są kasowane.</p>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn primary big" id="licSave" type="button">Aktywuj</button>
     </div>
   </div>
 </div>
