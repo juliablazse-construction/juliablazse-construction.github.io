@@ -1,7 +1,7 @@
 const CACHE = 'usterki-v74';
 const FILES = ['./', 'index.html', 'app.css', 'app.js', 'guard.js', 'manifest.webmanifest',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-180.png', 'icons/icon-64.png', 'icons/icon-maskable-512.png',
-  'vendor/pdf.min.js', 'vendor/pdf.worker.min.js', 'vendor/jspdf.umd.min.js', 'vendor/jszip.min.js',
+  'vendor/pdf.min.js', 'vendor/pdf.worker.min.js', 'vendor/jspdf.umd.min.js', 'vendor/jszip.min.js', 'vendor/pdf-lib.min.js',
   'vendor/mozjpeg_enc.js', 'vendor/mozjpeg_enc.wasm', 'vendor/LiberationSans-Regular.ttf', 'vendor/LiberationSans-Bold.ttf'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES.map(f => new Request(f, { cache: 'reload' })))).then(() => self.skipWaiting())); // jednorazowo: wersja 1.17.7 nie mogła pokazać paska aktualizacji

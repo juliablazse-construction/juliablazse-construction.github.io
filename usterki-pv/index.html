@@ -523,6 +523,7 @@
         <select id="rpPhotoSize"><option value="h">Pół strony na usterkę (2 usterki na stronie)</option><option value="l">Duże (jedno pod drugim)</option><option value="m">Średnie</option><option value="s">Małe (dwa obok siebie)</option></select>
         <label class="check"><input type="checkbox" id="rpShowContr" checked> Pokazuj nazwy wykonawców w raporcie dla całej inwestycji i końcowym <small>(w raporcie dla wykonawcy nazwa jest zawsze)</small></label>
         <label class="check"><input type="checkbox" id="rpCard" checked> Karta wykonawcy: instrukcja „Zgłoś do odbioru” na 1. stronie raportu i plik Karty w paczce ZIP oraz w raportach dla wykonawców</label>
+        <label class="check"><input type="checkbox" id="rpVector" checked> Rysunki w pełnej jakości: oryginalny rysunek z PDF-a, ostre napisy przy zbliżeniu <small>(raport jest większy o rozmiar stron rysunku; odznacz, jeśli plik ma być mały)</small></label>
         <label class="check"><input type="checkbox" id="rpBeforeAfter" checked> Zdjęcia „przed” i „po” obok siebie (gdy jest zdjęcie z weryfikacji)</label>
     </div>
     <div class="sheet-foot">
@@ -564,6 +565,7 @@
 <script src="vendor/pdf.min.js"></script>
 <script src="vendor/jspdf.umd.min.js"></script>
 <script src="vendor/jszip.min.js"></script>
+<script src="vendor/pdf-lib.min.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
