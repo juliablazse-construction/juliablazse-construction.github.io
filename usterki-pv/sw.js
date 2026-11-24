@@ -1,8 +1,8 @@
-const CACHE = 'usterki-v63';
+const CACHE = 'usterki-v66';
 const FILES = ['./', 'index.html', 'app.css', 'app.js', 'guard.js', 'manifest.webmanifest',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-180.png', 'icons/icon-64.png', 'icons/icon-maskable-512.png',
   'vendor/pdf.min.js', 'vendor/pdf.worker.min.js', 'vendor/jspdf.umd.min.js', 'vendor/jszip.min.js',
-  'vendor/LiberationSans-Regular.ttf', 'vendor/LiberationSans-Bold.ttf'];
+  'vendor/mozjpeg_enc.js', 'vendor/mozjpeg_enc.wasm', 'vendor/LiberationSans-Regular.ttf', 'vendor/LiberationSans-Bold.ttf'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES.map(f => new Request(f, { cache: 'reload' })))).then(() => self.skipWaiting())); // jednorazowo: wersja 1.17.7 nie mogła pokazać paska aktualizacji
 });
@@ -10,7 +10,7 @@ self.addEventListener('install', e => {
 self.addEventListener('message', e => { if (e.data === 'skipWaiting') self.skipWaiting(); 
 });
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+  e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE && k !== 'usterki-licencja').map(k => caches.delete(k)))).then(() => self.clients.claim()));
 });
 // Biblioteki: najpierw pamięć podręczna. Pliki aplikacji: najpierw sieć (szybkie aktualizacje), offline z pamięci.
 self.addEventListener('fetch', e => {

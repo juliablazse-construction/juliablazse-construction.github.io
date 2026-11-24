@@ -30,6 +30,7 @@
   <div id="licBanner" class="hint-banner hidden">
     <span id="licBannerTxt"></span>
     <button class="link-btn" id="licBannerBtn" type="button">Wpisz kod</button>
+    <a class="link-btn" id="licBannerBuy" href="kup/" target="_blank" rel="noopener">Kup</a>
   </div>
   <main class="home-main">
     <button class="big-add" id="btnNewProject">
@@ -73,6 +74,7 @@
   <nav class="bottombar">
     <button id="btnFit"><span class="bi">⤢</span>Cały rysunek</button>
     <button id="btnList"><span class="bi">☰</span>Usterki <b id="defCount">0</b></button>
+    <button id="btnSite"><span class="bi">📷</span>Dodaj zdjęcie <b id="siteCount" class="hidden">0</b></button>
     <button id="btnReport" class="primary"><span class="bi">⎙</span>Raport</button>
   </nav>
 </section>
@@ -155,6 +157,7 @@
       <h3>Usterki</h3>
       <button class="icon-btn" data-close aria-label="Zamknij">✕</button>
     </div>
+    <div class="reply-row"><button class="btn ghost" id="btnReplyImport" type="button">📥 Wczytaj odpowiedź wykonawcy</button><input type="file" id="replyInput" accept=".json,application/json" hidden></div>
     <div class="filter-row" id="listStatus"></div>
     <div class="filter-row" id="listFilter"></div>
     <div class="filter-row hidden" id="listContr"></div>
@@ -188,7 +191,7 @@
       <div id="rpProgress" class="progress hidden"><div class="bar"><i></i></div><span>Tworzenie raportu…</span></div>
       <div id="rpResult" class="hidden result-box">
         <p id="rpResultText"></p>
-        <button class="btn primary big" id="rpView">📄 Pokaż raport</button>
+        <button class="btn primary big" id="rpView">📤 Udostępnij</button>
         <button class="btn" id="rpShare">💾 Zapisz raport</button>
         <button class="btn hidden" id="rpFolder"></button>
         <button class="link-btn hidden" id="rpFolderPick">Wybierz inny folder</button>
@@ -223,6 +226,30 @@
       <p class="lbl foot-lbl">Inne pliki</p>
       <button class="btn ghost" id="rpExcel">📊 Tabela Excel (.xlsx)</button>
       <button class="btn ghost" id="rpZip">Paczka ZIP: raport + zdjęcia + tabela CSV</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ARKUSZ: ZDJĘCIA OGÓLNE BUDOWY ============ -->
+<div id="siteSheet" class="sheet">
+  <div class="sheet-card tall">
+    <div class="sheet-head">
+      <h3>Zdjęcia ogólne budowy</h3>
+      <button class="icon-btn" data-close aria-label="Zamknij">✕</button>
+    </div>
+    <div class="sheet-body">
+      <p class="small-note">Zdjęcia całej budowy (nie usterki, bez pinezki). Trafią do raportu na osobną stronę zaraz po rysunkach.</p>
+      <p class="small-note hidden" id="siteEmpty">Na razie brak zdjęć. Dodaj pierwsze przyciskiem poniżej.</p>
+      <div id="siteGrid" class="site-grid"></div>
+      <div class="photo-btns">
+        <button class="btn" id="siteCamera">📷 Zrób zdjęcie</button>
+        <button class="btn ghost" id="siteGallery">🖼 Z galerii</button>
+      </div>
+      <input type="file" id="siteCamInput" accept="image/*" capture="environment" hidden>
+      <input type="file" id="siteGalInput" accept="image/*" multiple hidden>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn primary big" data-close>Gotowe</button>
     </div>
   </div>
 </div>
@@ -271,6 +298,9 @@
       <input id="asAuthor" type="text" placeholder="imię i nazwisko">
       <label class="lbl" for="asInspector">Inspektor <small>(domyślnie przy weryfikacji i w raportach)</small></label>
       <input id="asInspector" type="text" placeholder="imię i nazwisko">
+      <label class="lbl" for="asReplyEmail">Mój e-mail i telefon do odpowiedzi wykonawców <small>(wpisują się do instrukcji w raporcie i do Karty wykonawcy – tam wykonawca wyśle swoją odpowiedź)</small></label>
+      <input id="asReplyEmail" type="email" placeholder="e-mail" autocomplete="off">
+      <input id="asReplyPhone" type="tel" placeholder="telefon (WhatsApp), np. 600 100 200" autocomplete="off" style="margin-top:6px">
       <p class="small-note" id="asStorage"></p>
       <p class="small-note">Wszystkie dane (rysunki, zdjęcia, usterki) są zapisywane tylko na tym urządzeniu. Kopię całego projektu zapisujesz na swoim dysku przyciskiem 💾 w projekcie, a raporty przyciskiem „Udostępnij”.</p>
       <button class="btn" id="asFeedback" type="button" style="width:100%;margin-top:8px">💬 Zgłoś problem lub pomysł</button>
@@ -296,10 +326,12 @@
       <label class="lbl" for="licCode">Kod licencji <small>(dostajesz go e-mailem po zakupie)</small></label>
       <textarea id="licCode" rows="4" placeholder="USTERKI.…" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>
       <p class="small-note" id="licMsg" style="color:#c0392b"></p>
-      <p class="small-note">Kod jest przypisany do jednej osoby: jej imię i nazwisko widać w stopce raportów. Dane w aplikacji są zawsze Twoje i nigdy nie są kasowane.</p>
+      <p class="small-note">Kod jest przypisany do jednej osoby i działa na 2 urządzeniach (np. telefon i iPad): jej imię i nazwisko widać w stopce raportów. Dane w aplikacji są zawsze Twoje i nigdy nie są kasowane.</p>
     </div>
     <div class="sheet-foot">
+      <a class="btn big" id="licBuy" href="kup/" target="_blank" rel="noopener" style="text-align:center;text-decoration:none">Kup licencję</a>
       <button class="btn primary big" id="licSave" type="button">Aktywuj</button>
+      <button class="btn big hidden" id="licRelease" type="button">Odłącz to urządzenie</button>
     </div>
   </div>
 </div>
@@ -475,6 +507,7 @@
         <label class="lbl" for="rpPhotoSize">Wielkość zdjęć</label>
         <select id="rpPhotoSize"><option value="h">Pół strony na usterkę (2 usterki na stronie)</option><option value="l">Duże (jedno pod drugim)</option><option value="m">Średnie</option><option value="s">Małe (dwa obok siebie)</option></select>
         <label class="check"><input type="checkbox" id="rpShowContr" checked> Pokazuj nazwy wykonawców w raporcie dla całej inwestycji i końcowym <small>(w raporcie dla wykonawcy nazwa jest zawsze)</small></label>
+        <label class="check"><input type="checkbox" id="rpCard" checked> Karta wykonawcy: instrukcja „Zgłoś do odbioru” na 1. stronie raportu i plik Karty w paczce ZIP oraz w raportach dla wykonawców</label>
         <label class="check"><input type="checkbox" id="rpBeforeAfter" checked> Zdjęcia „przed” i „po” obok siebie (gdy jest zdjęcie z weryfikacji)</label>
     </div>
     <div class="sheet-foot">
