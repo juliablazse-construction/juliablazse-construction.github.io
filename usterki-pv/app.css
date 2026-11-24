@@ -354,3 +354,6 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--mint-d)}
 .site-ph .rm{position:absolute;top:4px;right:4px;width:30px;height:30px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:15px}
 .site-ph .site-cap{width:100%;margin-top:4px;font-size:13px;padding:6px 8px}
 .bottombar button{padding:0 2px;font-size:12px}
+
+.prev-body{background:#e9edf1;padding:8px 16px}
+.prev-page{display:block;margin:0 auto 10px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.25)}
