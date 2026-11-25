@@ -363,3 +363,4 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--mint-d)}
 .prev-page{display:block;margin:0 auto 10px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.25)}
 
 .btn-note{display:block;margin:-4px 2px 6px;font-size:12px;color:var(--muted);line-height:1.35}
+.multi-row.sub{padding-left:16px;border-top-style:dashed}
