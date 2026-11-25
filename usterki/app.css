@@ -39,6 +39,10 @@ input:focus,textarea:focus{outline:2px solid var(--accent2);border-color:transpa
 .proj:active{background:#f0f4f9}
 .empty{color:var(--muted);text-align:center;padding:24px 8px}
 .hint-banner{background:#fff8e1;border-bottom:1px solid #f0dc9a;padding:10px 14px;font-size:14px}
+.install-card p{margin:6px 0}.inst-steps{margin:6px 0 4px;padding-left:22px;line-height:1.45}.inst-steps li{margin:3px 0}
+.inst-btns{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.inst-btns .primary{background:var(--accent2);color:#fff;border:0;border-radius:8px;padding:8px 14px;font-weight:700}
+#home .inst-btns .primary{background:var(--mint);color:#0d1013}
 .link-btn{background:none;border:0;color:var(--accent2);font-weight:600;padding:4px 8px}
 
 /* Viewer */

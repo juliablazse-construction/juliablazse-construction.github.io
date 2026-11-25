@@ -23,9 +23,14 @@
     <button class="icon-btn look-btn" id="btnLookHome" aria-label="Wygląd raportu">🎨</button>
     <button class="icon-btn" id="btnAppSettings" aria-label="Ustawienia">⚙︎</button>
   </header>
-  <div id="installHint" class="hint-banner hidden">
-    <b>Wskazówka:</b> dodaj aplikację do ekranu początkowego (Udostępnij → „Do ekranu początkowego”), żeby działała offline i nie traciła danych.
-    <button class="link-btn" id="btnHideInstall">OK</button>
+  <div id="installHint" class="hint-banner install-card hidden">
+    <b>📲 Dodaj aplikację do ekranu głównego</b>
+    <p class="inst-why">Dzięki temu działa bez internetu, otwiera się jak zwykła aplikacja, a przeglądarka (np. Safari na iPhonie) nie skasuje Twoich projektów po kilku dniach.</p>
+    <ol id="installSteps" class="inst-steps"></ol>
+    <div class="inst-btns">
+      <button class="primary" id="btnInstallNow" type="button" hidden>Zainstaluj aplikację</button>
+      <button class="link-btn" id="btnHideInstall" type="button">Zamknij (pokażę się znowu)</button>
+    </div>
   </div>
   <div id="licBanner" class="hint-banner hidden">
     <span id="licBannerTxt"></span>
