@@ -51,7 +51,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent2);border-color:transpa
 #stage canvas{position:absolute;left:0;top:0;pointer-events:none}
 #detailCanvas{display:none}
 #pins{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.pin{position:absolute;left:0;top:0;width:30px;height:30px;margin:-30px 0 0 0;pointer-events:auto}
+.pin{position:absolute;left:0;top:0;width:30px;height:30px;margin:-33px 0 0 -15px;pointer-events:auto}
 .pin .drop{position:absolute;inset:0;border-radius:50% 50% 50% 0;transform:rotate(-45deg) scale(.86);transform-origin:50% 50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45)}
 .pin .num{position:absolute;inset:0;display:grid;place-items:center;font-size:12px;font-weight:700;margin-left:2px;margin-top:-2px}
 .pin.pending .drop{animation:pulse 1s infinite}
