@@ -365,3 +365,10 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--mint-d)}
 .btn-note{display:block;margin:-4px 2px 6px;font-size:12px;color:var(--muted);line-height:1.35}
 .multi-row.sub{padding-left:16px;border-top-style:dashed}
 .area-add{display:block;width:100%;margin:8px 0 14px;padding:12px;font-size:15px}
+
+.srow{display:flex;align-items:flex-start;gap:10px}
+.srow .sf{flex:1;min-width:0}
+.srow .shk{width:22px;height:22px;flex:none;margin-top:34px}
+.show-more{margin-top:14px;border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+.show-more summary{cursor:pointer;font-weight:600;font-size:15px}
+.show-more summary small{color:var(--muted);font-weight:400}
