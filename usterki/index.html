@@ -195,6 +195,7 @@
       <div id="rpContrBox" class="hidden" hidden><label class="lbl" for="rpContr">Wykonawca <small>(raport tylko dla jednego wykonawcy)</small></label><select id="rpContr"></select></div>
       <label class="check"><input type="checkbox" id="rpMap" checked> Wycinek rysunku przy każdej usterce</label>
       <button type="button" class="look-row" id="rpLookOpen"><span>🎨</span><span><b>Wygląd raportu</b><br><small id="rpLookSum">logo, wielkość zdjęć, przed/po</small></span><span>›</span></button>
+      <button type="button" class="look-row" id="rpShowOpen"><span>👁</span><span><b>Co pokazać w raporcie</b><br><small id="rpShowSum">wszystko widoczne (jak dotychczas)</small></span><span>›</span></button>
       <div id="rpProgress" class="progress hidden"><div class="bar"><i></i></div><span>Tworzenie raportu…</span></div>
       <div id="rpResult" class="hidden result-box">
         <p id="rpResultText"></p>
@@ -521,6 +522,22 @@
 </div>
 
 <!-- ============ ARKUSZ: WYGLĄD RAPORTU ============ -->
+<div id="showSheet" class="sheet">
+  <div class="sheet-card">
+    <div class="sheet-head">
+      <h3>👁 Co pokazać w raporcie</h3>
+      <button class="icon-btn" data-close aria-label="Zamknij">✕</button>
+    </div>
+    <div class="sheet-body">
+      <p class="small-note" style="margin-top:0">Odznacz to, czego nie chcesz w raporcie. Wybór jest zapamiętany osobno dla każdego projektu. Domyślnie wszystko jest widoczne.</p>
+      <div id="rpShowList"></div>
+      <button type="button" class="link-btn" id="rpShowAll">Zaznacz wszystkie</button>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn primary big" data-close type="button">✓ Gotowe</button>
+    </div>
+  </div>
+</div>
 <div id="lookSheet" class="sheet">
   <div class="sheet-card">
     <div class="sheet-head">
