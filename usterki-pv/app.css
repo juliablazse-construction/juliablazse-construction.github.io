@@ -238,6 +238,11 @@ select{font:inherit;font-size:16px;width:100%;padding:10px 12px;border:1px solid
 .clist{margin-top:6px}
 .clist:empty{display:none}
 .citem{display:flex;align-items:center;gap:6px;padding:8px 2px;border-bottom:1px solid var(--line);font-size:15px}
+.citem{flex-wrap:wrap}
+.ctr-btn{flex-basis:100%;text-align:left;font-size:13px!important;color:#4a5568;background:#f5f7fa!important}
+.ctr-panel{flex-basis:100%;display:flex;flex-direction:column;gap:6px;padding:6px 4px 2px}
+.ctr-panel small{color:#6b7684}
+.ctr-opt{display:flex;align-items:center;gap:8px;font-size:15px}
 .citem span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .citem button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 10px;font-size:14px}
 .col-btns{display:flex;flex-direction:column;gap:8px}
