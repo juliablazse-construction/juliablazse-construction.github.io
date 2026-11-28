@@ -1,4 +1,4 @@
-const CACHE = 'usterki-v99';
+const CACHE = 'usterki-v100';
 const FILES = ['./', 'index.html', 'app.css', 'app.js', 'i18n.js', 'lang-en.js', 'guard.js', 'manifest.webmanifest',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-180.png', 'icons/icon-64.png', 'icons/icon-maskable-512.png',
   'vendor/pdf.min.js', 'vendor/pdf.worker.min.js', 'vendor/jspdf.umd.min.js', 'vendor/jszip.min.js', 'vendor/pdf-lib.min.js',
