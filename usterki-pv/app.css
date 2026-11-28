@@ -379,3 +379,6 @@ html.i18n-wait body{visibility:hidden}
 .lang-btn{background:none;border:2px solid transparent;border-radius:10px;font-size:22px;line-height:1;min-width:40px;min-height:40px;padding:0;opacity:.55;cursor:pointer;color:inherit}
 .lang-btn.on{opacity:1;border-color:var(--mint,#7ee2b8)}
 .lang-btn:active{background:rgba(255,255,255,.15)}
+
+/* Raport z wizyty: ukrywamy elementy tylko dla usterek */
+body.kind-visit .only-defects{display:none!important}
