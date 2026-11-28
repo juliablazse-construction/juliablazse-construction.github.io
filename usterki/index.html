@@ -13,6 +13,9 @@
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="stylesheet" href="app.css">
+<script>/* język: jeśli wybrano inny niż polski, ukryj stronę do czasu przetłumaczenia (zabezpieczenie: najdalej 2,5 s) */
+try { var l = localStorage.getItem('usterki-lang'); if (l && l !== 'pl') { document.documentElement.classList.add('i18n-wait'); setTimeout(function () { document.documentElement.classList.remove('i18n-wait'); }, 2500); } } catch (e) { }
+</script>
 </head>
 <body>
 
@@ -20,6 +23,7 @@
 <section id="home" class="screen active">
   <header class="topbar">
     <div class="brand"><img class="logo-img" src="icons/icon-64.png" alt="">Usterki</div>
+    <div class="lang-sw" id="langSw" role="group" aria-label="Język / Language"></div>
     <button class="icon-btn look-btn" id="btnLookHome" aria-label="Wygląd raportu">🎨</button>
     <button class="icon-btn" id="btnAppSettings" aria-label="Ustawienia">⚙︎</button>
   </header>
@@ -592,6 +596,8 @@
 </div>
 <div id="toast" class="toast"></div>
 
+<script src="i18n.js"></script>
+<script src="lang-en.js"></script>
 <script src="guard.js"></script>
 <script src="vendor/pdf.min.js"></script>
 <script src="vendor/jspdf.umd.min.js"></script>
